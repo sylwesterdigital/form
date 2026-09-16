@@ -1,0 +1,15 @@
+[Unit]
+Description=Form ZIP Release Watcher
+After=network.target form.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/mojoworks/labs/form
+EnvironmentFile=-/etc/default/form
+ExecStart=/var/www/mojoworks/labs/form/scripts/form-watch.sh
+Restart=always
+RestartSec=4
+
+[Install]
+WantedBy=multi-user.target

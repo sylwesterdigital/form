@@ -1,0 +1,20 @@
+[Unit]
+Description=Form CV Autofill Flask Application
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/mojoworks/labs/form
+EnvironmentFile=-/etc/default/form
+Environment=PYTHONUNBUFFERED=1
+Environment=PLAYWRIGHT_BROWSERS_PATH=/var/www/mojoworks/labs/form/.playwright-browsers
+ExecStart=/var/www/mojoworks/labs/form/.venv/bin/gunicorn --workers 2 --threads 2 --timeout 120 --bind 127.0.0.1:5099 wsgi:app
+Restart=on-failure
+RestartSec=3
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

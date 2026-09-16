@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Form — CV Autofill</title>
+  <link rel="stylesheet" href="static/app.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">FORM / v{{ version }}</div>
+        <h1>Stop typing your CV into forms.</h1>
+        <p>Parse once. Edit the structured profile. Let Playwright fill the repetitive fields. Review before anything is submitted.</p>
+      </div>
+      <div class="pill">Flask + Playwright + AI</div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <div class="step">01</div>
+        <h2>CV → profile</h2>
+        <form id="cvForm">
+          <label>CV file
+            <input id="cvFile" name="cv" type="file" accept=".pdf,.docx,.txt,.md" required>
+          </label>
+          <div class="row">
+            <label>AI provider
+              <select id="provider" name="provider">
+                <option value="ollama" {% if defaults.provider == 'ollama' %}selected{% endif %}>Ollama (local)</option>
+                <option value="openai" {% if defaults.provider == 'openai' %}selected{% endif %}>OpenAI API</option>
+                <option value="none" {% if defaults.provider == 'none' %}selected{% endif %}>No AI / basic extraction</option>
+              </select>
+            </label>
+            <label>Model
+              <input id="model" name="model" value="{{ defaults.ollama_model }}" autocomplete="off">
+            </label>
+          </div>
+          <button type="submit">Parse CV</button>
+        </form>
+        <div id="parseStatus" class="status muted">No CV parsed yet.</div>
+      </article>
+
+      <article class="card span2">
+        <div class="step">02</div>
+        <h2>Canonical profile JSON</h2>
+        <textarea id="profile" spellcheck="false" placeholder="Parsed profile appears here..."></textarea>
+        <div class="toolbar">
+          <button id="saveProfile" class="secondary" type="button">Save profile</button>
+          <span id="profileStatus" class="status muted">Editable before automation.</span>
+        </div>
+      </article>
+
+      <article class="card span2">
+        <div class="step">03</div>
+        <h2>Autofill application</h2>
+        <label>Job/application URL
+          <input id="jobUrl" type="url" placeholder="https://...myworkdayjobs.com/..." autocomplete="off">
+        </label>
+        <div class="row three">
+          <label>Browser
+            <select id="browser">
+              <option value="chromium" {% if defaults.browser == 'chromium' %}selected{% endif %}>Chromium</option>
+              <option value="brave" {% if defaults.browser == 'brave' %}selected{% endif %}>Brave</option>
+              <option value="chrome" {% if defaults.browser == 'chrome' %}selected{% endif %}>Chrome</option>
+            </select>
+          </label>
+          <label class="check"><input id="headless" type="checkbox" {% if defaults.headless %}checked{% endif %}> Headless</label>
+          <label class="check"><input id="autoAdvance" type="checkbox" {% if defaults.auto_advance %}checked{% endif %}> Advance safe pages</label>
+        </div>
+        <button id="autofill" type="button">Start autofill</button>
+        <p class="note">Never answers voluntary disclosures and never clicks final Submit.</p>
+      </article>
+
+      <article class="card">
+        <div class="step">04</div>
+        <h2>Run status</h2>
+        <div id="runStatus" class="status muted">Idle.</div>
+        <pre id="runLog"></pre>
+        <a id="screenshotLink" class="hidden" target="_blank" rel="noopener">Open review screenshot</a>
+      </article>
+    </section>
+
+    <footer>
+      <span>Private by default: bind locally or protect the Nginx route with authentication.</span>
+      <a href="https://github.com/sylwesterdigital/form" target="_blank" rel="noopener">GitHub</a>
+    </footer>
+  </main>
+  <script>
+    window.FORM_DEFAULTS = {{ defaults|tojson }};
+  </script>
+  <script src="static/app.js"></script>
+</body>
+</html>
